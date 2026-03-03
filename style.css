@@ -90,6 +90,7 @@ body {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -666,7 +667,8 @@ input[type="radio"]:hover {
     margin-bottom: 0.5rem;
 }
 
-.lecture-item ul, .lecture-item p {
+.lecture-item ul,
+.lecture-item p {
     margin-bottom: 1rem;
 }
 
@@ -954,8 +956,22 @@ input[type="radio"]:hover {
     }
 
     .back-btn {
-        padding: 0.65rem 1.2rem;
+        /* padding: 0.7rem 1.2rem;
         font-size: 0.9rem;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center; */
+        background: var(--accent-color);
+        color: var(--white);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        white-space: nowrap;
     }
 
     .graphs-container,
@@ -1100,8 +1116,18 @@ input[type="radio"]:hover {
 
     .back-btn {
         width: 100%;
-        padding: 0.6rem 1rem;
-        font-size: 0.8rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+        touch-action: manipulation;
+    }
+
+    .back-btn:active {
+        transform: scale(0.98);
     }
 
     .home-content h1 {
