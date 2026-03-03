@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Learning Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">📚 Physics Heaven</h1>
+            <ul class="nav-menu">
+                <li><a href="#home" onclick="showSection('home')" class="nav-link active">Home</a></li>
+                <li><a href="#graphs" onclick="showSection('graphs')" class="nav-link">📊 Graph</a></li>
+                <li><a href="#models" onclick="showSection('models')" class="nav-link">🎯 3D Models</a></li>
+                <li><a href="#lectures" onclick="showSection('lectures')" class="nav-link">📖 Lectures</a></li>
+                <li><a href="#quiz" onclick="showSection('quiz')" class="nav-link">❓ Quiz</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="section active">
+        <div class="home-content">
+            <h1>Welcome to Physics Learning Hub</h1>
+            <p>An Interactive Platform for College Students</p>
+            <div class="features">
+                <div class="feature-card" onclick="showSection('graphs')">
+                    <h3>📊 Graphs</h3>
+                    <p>Interactive visualizations of physics concepts like motion, forces, and energy.</p>
+                </div>
+                <div class="feature-card" onclick="showSection('models')">
+                    <h3>🎯 3D Models</h3>
+                    <p>Explore 3D representations of physical objects and structures.</p>
+                </div>
+                <div class="feature-card" onclick="showSection('lectures')">
+                    <h3>📖 Lectures</h3>
+                    <p>Comprehensive lecture notes on various physics topics.</p>
+                </div>
+                <div class="feature-card" onclick="showSection('quiz')">
+                    <h3>❓ Quiz</h3>
+                    <p>Test your knowledge with interactive quizzes and get instant feedback.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Graphs Section -->
+    <section id="graphs" class="section">
+        <h2>Interactive Physics Graphs</h2>
+        
+        <!-- Graph Tabs -->
+        <div class="graph-tabs">
+            <button onclick="switchGraphTab('predefined')" class="graph-tab-btn active">Predefined Graphs</button>
+            <button onclick="switchGraphTab('custom')" class="graph-tab-btn">Custom Equation</button>
+            <button onclick="switchGraphTab('points')" class="graph-tab-btn">Plot Points</button>
+        </div>
+
+        <!-- Predefined Graphs -->
+        <div id="predefined-graphs" class="graph-tab-content active">
+            <div class="graphs-container">
+                <div class="graph-card">
+                    <h3>Motion Graph (Position vs Time)</h3>
+                    <canvas id="motionChart"></canvas>
+                    <p class="description">Shows uniform motion with constant velocity</p>
+                </div>
+                <div class="graph-card">
+                    <h3>Velocity vs Time</h3>
+                    <canvas id="velocityChart"></canvas>
+                    <p class="description">Acceleration represented as a linear graph</p>
+                </div>
+                <div class="graph-card">
+                    <h3>Force vs Acceleration</h3>
+                    <canvas id="forceChart"></canvas>
+                    <p class="description">Newton's Second Law: F = ma</p>
+                </div>
+                <div class="graph-card">
+                    <h3>Energy Distribution</h3>
+                    <canvas id="energyChart"></canvas>
+                    <p class="description">Pie chart showing energy types</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Equation Tab -->
+        <div id="custom-graphs" class="graph-tab-content">
+            <div class="custom-graph-form">
+                <h3>Plot Custom Equations</h3>
+                <div class="form-group">
+                    <label>Graph Type:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 5px; font-weight: normal;">
+                            <input type="radio" name="graphType" value="2d" onchange="updateGraphTypeUI()"> 2D Graph
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; font-weight: normal;">
+                            <input type="radio" name="graphType" value="3d" checked onchange="updateGraphTypeUI()"> 3D Surface
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Equation Type:</label>
+                    <select id="equationType">
+                        <option value="simple">Simple (y = f(x))</option>
+                        <option value="parametric">Parametric (x(t), y(t))</option>
+                        <option value="surface">Surface (z = f(x,y))</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Equation (use x, y, t, sin, cos, sqrt, etc.):</label>
+                    <input type="text" id="customEquation" placeholder="e.g., sin(x) * cos(y) or x^2 + y^2">
+                    <small>Examples: sin(x), x^2, sqrt(x), x*y, cos(x)*sin(y)</small>
+                </div>
+                <div class="form-group">
+                    <label>X Range (min to max):</label>
+                    <div class="range-inputs">
+                        <input type="number" id="xMin" placeholder="Min" value="-10" min="-100" max="100">
+                        <input type="number" id="xMax" placeholder="Max" value="10" min="-100" max="100">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Y Range (min to max):</label>
+                    <div class="range-inputs">
+                        <input type="number" id="yMin" placeholder="Min" value="-10" min="-100" max="100">
+                        <input type="number" id="yMax" placeholder="Max" value="10" min="-100" max="100">
+                    </div>
+                </div>
+                <button onclick="plotCustomGraph()" class="plot-btn">Plot Graph</button>
+                <div id="canvas-3d-custom" class="canvas-3d-large"></div>
+                <canvas id="customChart2D" style="display: none;"></canvas>
+            </div>
+        </div>
+
+        <!-- Plot Points Tab -->
+        <div id="point-graphs" class="graph-tab-content">
+            <div class="points-graph-form">
+                <h3>Plot Custom Points</h3>
+                <div class="form-group">
+                    <label>Enter Points (x,y separated by space, one per line):</label>
+                    <textarea id="pointsInput" placeholder="1 2&#10;2 4&#10;3 6&#10;4 8" rows="8"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Equation Nature:</label>
+                    <select id="equationNature">
+                        <option value="linear">Linear</option>
+                        <option value="quadratic">Quadratic</option>
+                        <option value="exponential">Exponential</option>
+                        <option value="logarithmic">Logarithmic</option>
+                        <option value="sinusoidal">Sinusoidal</option>
+                    </select>
+                </div>
+                <button onclick="plotPoints()" class="plot-btn">Plot Points</button>
+                <canvas id="pointsChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D Models Section -->
+    <section id="models" class="section">
+        <h2>3D Physics Models & Simulations</h2>
+        
+        <!-- Models Tabs -->
+        <div class="models-tabs">
+            <button onclick="switchModelsTab('basic')" class="models-tab-btn active">Basic Models</button>
+            <button onclick="switchModelsTab('laser')" class="models-tab-btn">Laser & Optics</button>
+            <button onclick="switchModelsTab('vectors')" class="models-tab-btn">Vectors</button>
+            <button onclick="switchModelsTab('projectile')" class="models-tab-btn">Projectile Motion</button>
+        </div>
+
+        <!-- Basic Models -->
+        <div id="basic-models" class="models-tab-content active">
+            <div class="models-container">
+                <div class="model-card">
+                    <h3>Atom Structure</h3>
+                    <div id="canvas-atom" class="canvas-3d"></div>
+                    <button onclick="createAtom()">Create Atom</button>
+                </div>
+                <div class="model-card">
+                    <h3>Simple Pendulum</h3>
+                    <div id="canvas-pendulum" class="canvas-3d"></div>
+                    <button onclick="createPendulum()">Create Pendulum</button>
+                </div>
+                <div class="model-card">
+                    <h3>Solar System</h3>
+                    <div id="canvas-solar" class="canvas-3d"></div>
+                    <button onclick="createSolarSystem()">Create Solar System</button>
+                </div>
+                <div class="model-card">
+                    <h3>Wave Motion</h3>
+                    <div id="canvas-wave" class="canvas-3d"></div>
+                    <button onclick="createWave()">Create Wave</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Laser & Optics Models -->
+        <div id="laser-models" class="models-tab-content">
+            <div class="models-container">
+                <div class="model-card">
+                    <h3>Laser Light Simulation</h3>
+                    <div id="canvas-laser" class="canvas-3d"></div>
+                    <div class="controls">
+                        <label>Laser Angle: <input type="range" id="laserAngle" min="0" max="360" value="45" onchange="createLaser()"></label>
+                        <label>Intensity: <input type="range" id="laserIntensity" min="0.1" max="2" value="1" step="0.1" onchange="createLaser()"></label>
+                    </div>
+                    <button onclick="createLaser()">Create Laser</button>
+                </div>
+                <div class="model-card">
+                    <h3>Light Refraction (Snell's Law)</h3>
+                    <div id="canvas-refraction" class="canvas-3d"></div>
+                    <div class="controls">
+                        <label>Medium 1 Refractive Index: <input type="number" id="n1" min="1" max="2.5" step="0.1" value="1"></label>
+                        <label>Medium 2 Refractive Index: <input type="number" id="n2" min="1" max="2.5" step="0.1" value="1.5"></label>
+                        <label>Incident Angle: <input type="range" id="incidentAngle" min="0" max="80" value="30" onchange="createRefraction()"></label>
+                    </div>
+                    <button onclick="createRefraction()">Show Refraction</button>
+                </div>
+                <div class="model-card">
+                    <h3>Electromagnetic Wave</h3>
+                    <div id="canvas-emwave" class="canvas-3d"></div>
+                    <div class="controls">
+                        <label>Frequency: <input type="range" id="waveFreq" min="1" max="10" value="5" onchange="createEMWave()"></label>
+                        <label>Amplitude: <input type="range" id="waveAmp" min="0.5" max="3" step="0.5" value="1" onchange="createEMWave()"></label>
+                    </div>
+                    <button onclick="createEMWave()">Create EM Wave</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vector Calculator -->
+        <div id="vector-models" class="models-tab-content">
+            <div class="vector-calculator">
+                <h3>Vector Operations Calculator</h3>
+                <div class="vector-controls">
+                    <div class="vector-input-group">
+                        <h4>Vector A</h4>
+                        <label>X: <input type="number" id="ax" value="3" step="0.1"></label>
+                        <label>Y: <input type="number" id="ay" value="4" step="0.1"></label>
+                        <label>Z: <input type="number" id="az" value="0" step="0.1"></label>
+                    </div>
+                    <div class="vector-input-group">
+                        <h4>Vector B</h4>
+                        <label>X: <input type="number" id="bx" value="1" step="0.1"></label>
+                        <label>Y: <input type="number" id="by" value="2" step="0.1"></label>
+                        <label>Z: <input type="number" id="bz" value="1" step="0.1"></label>
+                    </div>
+                </div>
+                <div class="vector-operations">
+                    <button onclick="vectorAddition()">Vector Addition (A + B)</button>
+                    <button onclick="vectorSubtraction()">Vector Subtraction (A - B)</button>
+                    <button onclick="vectorDotProduct()">Dot Product (A · B)</button>
+                    <button onclick="vectorCrossProduct()">Cross Product (A × B)</button>
+                </div>
+                <div id="vector-result" class="vector-result"></div>
+                <div id="canvas-vector" class="canvas-3d-large"></div>
+            </div>
+        </div>
+
+        <!-- Projectile Motion -->
+        <div id="projectile-models" class="models-tab-content">
+            <div class="projectile-simulator">
+                <h3>Projectile Motion Simulator</h3>
+                <div class="projectile-controls">
+                    <label>Initial Velocity (m/s): <input type="number" id="projVelocity" min="1" max="100" value="30" step="1"></label>
+                    <label>Launch Angle (degrees): <input type="range" id="projAngle" min="0" max="90" value="45" onchange="updateProjectileAngle()"></label>
+                    <span id="angleDisplay">45°</span>
+                    <label>Gravity (m/s²): <input type="number" id="projGravity" min="1" max="20" value="9.8" step="0.1"></label>
+                </div>
+                <div class="projectile-buttons">
+                    <button onclick="launchProjectile()">Launch</button>
+                    <button onclick="resetProjectile()">Reset</button>
+                </div>
+                <div id="canvas-projectile" class="canvas-3d-large"></div>
+                <div id="projectile-info" class="projectile-info"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lectures Section -->
+    <section id="lectures" class="section">
+        <h2>Physics Lectures & Videos</h2>
+        <div class="lectures-container">
+            <div class="lecture-nav">
+                <button onclick="showLecture(0)" class="lecture-btn active">Kinematics</button>
+                <button onclick="showLecture(1)" class="lecture-btn">Dynamics</button>
+                <button onclick="showLecture(2)" class="lecture-btn">Energy</button>
+                <button onclick="showLecture(3)" class="lecture-btn">Waves</button>
+                <button onclick="showLecture(4)" class="lecture-btn">Optics</button>
+                <button onclick="showLecture(5)" class="lecture-btn">EMI & EM</button>
+                <button onclick="showLecture(6)" class="lecture-btn">Laser Light</button>
+                <button onclick="showLecture(7)" class="lecture-btn">Video Lectures</button>
+            </div>
+            <div class="lecture-content">
+                <div id="lecture-0" class="lecture-item active">
+                    <h3>Kinematics: Motion in One Dimension</h3>
+                    <p><strong>Definition:</strong> Kinematics is the study of motion without considering the forces that cause it.</p>
+                    <h4>Key Concepts:</h4>
+                    <ul>
+                        <li><strong>Displacement:</strong> Change in position (vector quantity)</li>
+                        <li><strong>Velocity:</strong> Rate of change of displacement</li>
+                        <li><strong>Acceleration:</strong> Rate of change of velocity</li>
+                    </ul>
+                    <h4>Equations of Motion:</h4>
+                    <p>• v = u + at</p>
+                    <p>• s = ut + ½at²</p>
+                    <p>• v² = u² + 2as</p>
+                </div>
+                <div id="lecture-1" class="lecture-item">
+                    <h3>Dynamics: Forces and Motion</h3>
+                    <p><strong>Definition:</strong> Dynamics studies motion considering the forces causing it.</p>
+                    <h4>Newton's Laws:</h4>
+                    <ul>
+                        <li><strong>First Law:</strong> An object at rest stays at rest unless acted upon by a force</li>
+                        <li><strong>Second Law:</strong> F = ma (Force equals mass times acceleration)</li>
+                        <li><strong>Third Law:</strong> For every action, there's an equal and opposite reaction</li>
+                    </ul>
+                    <h4>Types of Forces:</h4>
+                    <p>• Gravitational Force • Frictional Force • Normal Force • Applied Force</p>
+                </div>
+                <div id="lecture-2" class="lecture-item">
+                    <h3>Energy and Work</h3>
+                    <p><strong>Work:</strong> Energy transferred by a force acting on an object.</p>
+                    <p>W = F × d × cos(θ)</p>
+                    <h4>Types of Energy:</h4>
+                    <ul>
+                        <li><strong>Kinetic Energy:</strong> KE = ½mv²</li>
+                        <li><strong>Potential Energy:</strong> PE = mgh</li>
+                        <li><strong>Mechanical Energy:</strong> Total of KE and PE</li>
+                    </ul>
+                    <p><strong>Conservation of Energy:</strong> Total energy in an isolated system remains constant.</p>
+                </div>
+                <div id="lecture-3" class="lecture-item">
+                    <h3>Waves and Oscillations</h3>
+                    <p><strong>Wave:</strong> A disturbance that travels through space and carries energy.</p>
+                    <h4>Wave Properties:</h4>
+                    <ul>
+                        <li><strong>Wavelength (λ):</strong> Distance between two consecutive crests</li>
+                        <li><strong>Frequency (f):</strong> Number of waves per second</li>
+                        <li><strong>Amplitude (A):</strong> Maximum displacement from equilibrium</li>
+                    </ul>
+                    <p><strong>Wave Equation:</strong> v = f × λ</p>
+                </div>
+                <div id="lecture-4" class="lecture-item">
+                    <h3>Optics: Light and Vision</h3>
+                    <p><strong>Optics:</strong> Study of light and its interactions with matter.</p>
+                    <h4>Key Concepts:</h4>
+                    <ul>
+                        <li><strong>Reflection:</strong> Light bounces off a surface</li>
+                        <li><strong>Refraction:</strong> Light bends when entering different medium</li>
+                        <li><strong>Lens Laws:</strong> Used for magnification and focusing</li>
+                    </ul>
+                    <p><strong>Lens Formula:</strong> 1/f = 1/u + 1/v</p>
+                </div>
+                <div id="lecture-5" class="lecture-item">
+                    <h3>Electromagnetic Induction (EMI)</h3>
+                    <p><strong>Definition:</strong> EMI is the process of generating an electric current using a magnetic field.</p>
+                    <h4>Faraday's Law:</h4>
+                    <p>ε = -N dΦ/dt</p>
+                    <p>Where ε is induced EMF, N is number of turns, and Φ is magnetic flux.</p>
+                    <h4>Key Points:</h4>
+                    <ul>
+                        <li><strong>Magnetic Flux:</strong> Φ = B·A·cos(θ)</li>
+                        <li><strong>Lenz's Law:</strong> Induced current opposes the change in flux</li>
+                        <li><strong>Applications:</strong> Transformers, generators, induction motors</li>
+                    </ul>
+                </div>
+                <div id="lecture-6" class="lecture-item">
+                    <h3>Laser Light & Coherence</h3>
+                    <p><strong>LASER:</strong> Light Amplification by Stimulated Emission of Radiation</p>
+                    <h4>Laser Properties:</h4>
+                    <ul>
+                        <li><strong>Coherence:</strong> All photons in phase and same frequency</li>
+                        <li><strong>Directionality:</strong> Highly focused beam in one direction</li>
+                        <li><strong>Monochromaticity:</strong> Single pure color/wavelength</li>
+                    </ul>
+                    <h4>Laser Components:</h4>
+                    <ul>
+                        <li>Active Medium (gas, liquid, or solid)</li>
+                        <li>Energy Source (pump)</li>
+                        <li>Optical Cavity (mirrors)</li>
+                    </ul>
+                    <h4>Applications:</h4>
+                    <p>• Medical Surgery • Metal Cutting • Fiber Optics • Spectroscopy</p>
+                </div>
+                <div id="lecture-7" class="lecture-item">
+                    <h3>Video Lectures from YouTube</h3>
+                    <p><strong>Watch comprehensive physics lectures from expert educators:</strong></p>
+                    <div class="video-lectures">
+                        <div class="video-item">
+                            <h4>Introduction to EMI (25 min)</h4>
+                            <iframe width="100%" height="300" src="https://www.youtube.com/embed/SbwxiabN3Vs" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-item">
+                            <h4>Laser Physics Explained (20 min)</h4>
+                            <iframe width="100%" height="300" src="https://www.youtube.com/embed/qkOIHwpjbZY" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-item">
+                            <h4>Wave Mechanics & Optics (28 min)</h4>
+                            <iframe width="100%" height="300" src="https://www.youtube.com/embed/aJ8G5vJrKQU" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        <div class="video-item">
+                            <h4>Classical Mechanics (Kinematics & Dynamics)</h4>
+                            <iframe width="100%" height="300" src="https://www.youtube.com/embed/UxIHyCemxiE" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz Section -->
+    <section id="quiz" class="section">
+        <h2>Physics Quiz</h2>
+        <div class="quiz-container">
+            <div id="quiz-start" class="quiz-start">
+                <h3>Test Your Knowledge!</h3>
+                <p>Select quiz type and difficulty level:</p>
+                <div class="quiz-options">
+                    <div class="quiz-option-group">
+                        <label>Quiz Type:</label>
+                        <select id="quizType">
+                            <option value="local">Local Physics Questions</option>
+                            <option value="api">Random API Questions</option>
+                        </select>
+                    </div>
+                    <div class="quiz-option-group">
+                        <label>Difficulty:</label>
+                        <div class="difficulty-buttons">
+                            <button onclick="startQuiz('easy')" class="quiz-level-btn">Easy</button>
+                            <button onclick="startQuiz('medium')" class="quiz-level-btn">Medium</button>
+                            <button onclick="startQuiz('hard')" class="quiz-level-btn">Hard</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="quiz-content" class="quiz-content" style="display:none;">
+                <div class="quiz-header">
+                    <span id="question-counter">Question 1 of 5</span>
+                    <span id="score-display">Score: 0</span>
+                </div>
+                <div id="quiz-question" class="quiz-question"></div>
+                <div id="quiz-options" class="quiz-options"></div>
+                <button onclick="nextQuestion()" class="quiz-btn">Next Question</button>
+                <button onclick="resetQuiz()" class="quiz-btn secondary">End Quiz</button>
+            </div>
+
+            <div id="quiz-results" class="quiz-results" style="display:none;">
+                <h3>Quiz Completed!</h3>
+                <div class="score-card">
+                    <p id="final-score"></p>
+                    <p id="result-message"></p>
+                </div>
+                <button onclick="resetQuiz()" class="quiz-btn">Retake Quiz</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 Physics Learning Hub | Designed for College Students</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
